@@ -1,0 +1,174 @@
+openapi: 3.0.0
+info:
+  description: Fotrino
+  version: "1.0.0-oas3"
+  title: Fotrino
+  contact:
+    email: creative@michaelmolino.com
+    name: Michael Molino
+    url: https://www.fotrino.com/
+  license:
+    name: GPL v3
+    url: https://www.gnu.org/licenses/gpl-3.0.en.html
+
+paths:
+  /login/profile:
+    get:
+      summary: Returns a user profile for the currently logged in user
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "403":
+          description: User is not logged in
+
+  /api/folders:
+    get:
+      summary: Returns an array of folders
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  folders:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Folder"
+    post:
+      summary: Creates a folder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Folder"
+
+  /api/images/{folderId}:
+    get:
+      summary: Returns an array of images inside {folderId}
+      parameters:
+        - name: folderId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  images:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Image"
+
+  /api/images:
+    put:
+      summary: Returns an array of image objects that can be created.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                images:
+                  type: array
+                  items:
+                    $ref: "#/components/schemas/Image"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  images:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Image"
+    post:
+      summary: Create image object
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Image"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Image"
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        identity_provider:
+          type: string
+        external_id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        profile_pic:
+          type: string
+
+    Folder:
+      type: object
+      properties:
+        id:
+          type: integer
+        owner:
+          type: integer
+        name:
+          type: string
+
+    Image:
+      type: object
+      properties:
+        id:
+          type: integer
+        owner:
+          type: integer
+        folder:
+          type: integer
+        hash:
+          type: string
+        extension:
+          type: string
+        filtered:
+          type: boolean
+        presigned_put_url:
+          type: string
+        presigned_get_url_tn:
+          type: string
+        presigned_get_url_fs:
+          type: string

@@ -1,0 +1,6 @@
+FROM python:3
+RUN pip install git+https://github.com/pypa/pipenv.git
+WORKDIR /opt/fotrino-worker/
+COPY src/ ./
+RUN pipenv install --system
+CMD rq worker --url redis://${FOTRINO_REDIS_HOST}:${FOTRINO_REDIS_PORT}/${FOTRINO_REDIS_DB}
