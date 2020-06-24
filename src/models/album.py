@@ -53,8 +53,8 @@ class Album():
                 " RETURNING id",
                 (user.id, name,)
             )
-            id = cur.fetchone()[0]
-        return Album(id, user.id, name)
+            album_id = cur.fetchone()[0]
+        return Album(album_id, user.id, name)
 
     def update(self, user, name):
         if name == "Unsorted":

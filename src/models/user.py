@@ -52,7 +52,7 @@ class User(UserMixin):
                 " RETURNING id",
                 (identity_provider, external_id, name, email, profile_pic, country,)
             )
-            id = cur.fetchone()[0]
-        user = User(id, identity_provider, external_id, name, email, profile_pic, country)
+            user_id = cur.fetchone()[0]
+        user = User(user_id, identity_provider, external_id, name, email, profile_pic, country)
         Album.create(user, "Unsorted")
         return user

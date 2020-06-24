@@ -15,6 +15,8 @@ from psycopg2.errors import UniqueViolation, InvalidTextRepresentation
 
 ALLOWED_EXTENSIONS = set(['.jpg', '.jpeg', '.arw', '.srf', '.sr2', '.crw', '.cr2', '.cr3', '.nef', '.nrw', '.pef', '.ptx'])
 
+CACHE_CONTROL_HEADER = 'public, max-age=86400, immutable'
+
 
 class Photo():
     def __init__(self, id, owner, album, hash, extension, flag, exif_datetime, thumbnail_url, fullsize_url, original_url):
@@ -84,7 +86,7 @@ class Photo():
 
     @staticmethod
     def create(user, album, hash, file, exif_datetime):
-        needsUpdate = False
+        needs_update = False
         file_name, file_extension = os.path.splitext(file)
         if not exif_datetime:
             exif_datetime = "1930:08:25 12:00:00"
@@ -102,10 +104,10 @@ class Photo():
                     " RETURNING id",
                     (user.id, destination_album.id, hash, file_extension, exif_datetime)
                 )
-                id = cur.fetchone()[0]
+                photo_id = cur.fetchone()[0]
             except UniqueViolation:
-                needsUpdate = True
-            if needsUpdate:
+                needs_update = True
+            if needs_update:
                 with getcursor() as cur:
                     cur.execute(
                         "UPDATE photos SET album = %s, exif_datetime = %s, flag = NULL, status = 'P'"
@@ -113,29 +115,29 @@ class Photo():
                         " RETURNING id",
                         (destination_album.id, exif_datetime, user.id, hash)
                     )
-                    id = cur.fetchone()[0]
+                    photo_id = cur.fetchone()[0]
         thumbnail_url = Photo.get_presigned_url_tn(user, hash)
         fullsize_url = Photo.get_presigned_url_fs(user, hash)
         original_url = Photo.get_presigned_url_original(user, hash, file_extension)
-        return Photo(id, user.id, album, hash, file_extension, None, exif_datetime, thumbnail_url, fullsize_url, original_url)
+        return Photo(photo_id, user.id, album, hash, file_extension, None, exif_datetime, thumbnail_url, fullsize_url, original_url)
 
     @staticmethod
     @cache.memoize(64800)
     def get_presigned_url_tn(user, hash):
         object_name = str(user.id) + "/thumbnail/" + hash[:2] + "/" + hash + ".jpeg"
-        return minio.presigned_get_object(FOTRINO_MINIO_BUCKET, object_name, expires=timedelta(days=1), response_headers={'response-Cache-Control': 'public, max-age=86400, immutable'})
+        return minio.presigned_get_object(FOTRINO_MINIO_BUCKET, object_name, expires=timedelta(days=1), response_headers={'response-Cache-Control': CACHE_CONTROL_HEADER})
 
     @staticmethod
     @cache.memoize(64800)
     def get_presigned_url_fs(user, hash):
         object_name = str(user.id) + "/large/" + hash[:2] + "/" + hash + ".jpeg"
-        return minio.presigned_get_object(FOTRINO_MINIO_BUCKET, object_name, expires=timedelta(days=1), response_headers={'response-content-disposition': 'attachment', 'response-Cache-Control': 'public, max-age=86400, immutable', 'response-Content-Type': 'image/jpeg', 'response-X-Content-Type-Options': 'nosniff'})
+        return minio.presigned_get_object(FOTRINO_MINIO_BUCKET, object_name, expires=timedelta(days=1), response_headers={'response-content-disposition': 'attachment', 'response-Cache-Control': CACHE_CONTROL_HEADER, 'response-Content-Type': 'image/jpeg', 'response-X-Content-Type-Options': 'nosniff'})
 
     @staticmethod
     @cache.memoize(64800)
     def get_presigned_url_original(user, hash, extension):
         object_name = str(user.id) + "/original/" + hash[:2] + "/" + hash + extension
-        return minio.presigned_get_object(FOTRINO_MINIO_BUCKET, object_name, expires=timedelta(days=1), response_headers={'response-content-disposition': 'attachment', 'response-Cache-Control': 'public, max-age=86400, immutable'})
+        return minio.presigned_get_object(FOTRINO_MINIO_BUCKET, object_name, expires=timedelta(days=1), response_headers={'response-content-disposition': 'attachment', 'response-Cache-Control': CACHE_CONTROL_HEADER})
 
     @staticmethod
     def get_photos(user, album):

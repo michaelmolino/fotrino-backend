@@ -260,18 +260,18 @@ def put_api_photos_preupload():
 def post_api_photos():
     photo = Photo.create(current_user, request.json['album'], request.json['hash'], request.json['filename'], request.json['exif_datetime'])
     file_name, file_extension = os.path.splitext(request.json['filename'])
-    object = str(current_user.id) + "/original/" + request.json['hash'][:2] + "/" + request.json['hash'] + file_extension
-    q.enqueue(process_photo, FOTRINO_MINIO_BUCKET, object, photo.id)
+    new_object = str(current_user.id) + "/original/" + request.json['hash'][:2] + "/" + request.json['hash'] + file_extension
+    q.enqueue(process_photo, FOTRINO_MINIO_BUCKET, new_object, photo.id)
     return json.dumps(photo.__dict__)
 
 
 @app.route("/api/photos", methods=['PUT'])
 @login_required
 def put_api_photos():
-    for newPhoto in request.json:
-        photo = Photo.get(current_user, newPhoto['id'])
+    for new_photo in request.json:
+        photo = Photo.get(current_user, new_photo['id'])
         try:
-            photo = photo.update(current_user, newPhoto['album'], newPhoto['flag'], newPhoto['exif_datetime'])
+            photo = photo.update(current_user, new_photo['album'], new_photo['flag'], new_photo['exif_datetime'])
         except ValueError as error:
             return error.args[0], 400
     return json.dumps(photo.__dict__)

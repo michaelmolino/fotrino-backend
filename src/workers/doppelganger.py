@@ -15,7 +15,7 @@ RAW_EXTENSIONS = set(['.arw', '.srf', '.sr2', '.crw', '.cr2', '.cr3', '.nef', '.
 def process_photo(bucket, object, id):
     owner, version, hash_prefix, filename = object.split('/')
     file_name, file_extension = os.path.splitext(filename)
-    hash = filename.split('.')[0]
+    file_hash = filename.split('.')[0]
     photo = io.BytesIO(minio.get_object(bucket, object).read())
 
     if file_extension.lower() in RAW_EXTENSIONS:
@@ -61,7 +61,7 @@ def process_photo(bucket, object, id):
             cur.execute(
                 "INSERT INTO photo_metadata (photo, owner, hash, tag, value) "
                 "VALUES (%s, %s, %s, %s, %s)",
-                (id, owner, hash, tag, str(v)[:255],)
+                (id, owner, file_hash, tag, str(v)[:255],)
             )
             if tag == 'DateTime':
                 exif_datetime = datetime.strptime(v or "1930:08:25 12:00:00", "%Y:%m:%d %H:%M:%S")
