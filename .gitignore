@@ -1,6 +1,4 @@
 .DS_STORE
 .venv
 __pycache__
-
-*.tar
 *.sh

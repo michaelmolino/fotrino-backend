@@ -1,5 +1,3 @@
-.DS_Store
-.venv
-__pycache__
+src/.venv
+**/__pycache__
 .git
-*.tar
