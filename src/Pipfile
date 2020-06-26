@@ -9,6 +9,7 @@ verify_ssl = true
 Flask = "*"
 flask-login = "*"
 flask-caching = "*"
+flask-wtf = "*"
 pyopenssl = "*"
 gunicorn = "*"
 authlib = "*"

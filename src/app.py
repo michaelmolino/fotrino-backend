@@ -33,6 +33,7 @@ from flask_login import (
     login_user,
     logout_user
 )
+from flask_wtf.csrf import CSRFProtect
 from authlib.integrations.flask_client import OAuth
 from loginpass import create_flask_blueprint, create_hydra_backend
 from loginpass import (
@@ -73,6 +74,10 @@ cache_config = {
     'CACHE_TYPE': 'redis',
     'CACHE_REDIS_URL': 'redis://' + FOTRINO_REDIS_HOST + ':' + FOTRINO_REDIS_PORT + '/' + FOTRINO_REDIS_DB}
 cache.init_app(app, config=cache_config)
+
+# CSRF protection
+csrf = CSRFProtect()
+csrf.init_app(app)
 
 
 # Set up login manager
