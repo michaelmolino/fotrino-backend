@@ -1,0 +1,8 @@
+version: 1.0
+requirements:
+  - Pipfile
+  - Pipfile.lock
+  - path: src/Pipfile
+    parser: python/pipfile
+  - path: src/Pipfile.lock
+    parser: python/pipfile.lock
