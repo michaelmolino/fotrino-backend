@@ -63,7 +63,7 @@ def process_photo(bucket, object, id):
                 "VALUES (%s, %s, %s, %s, %s)",
                 (id, owner, file_hash, tag, str(v)[:255],)
             )
-            if tag == 'DateTime':
+            if tag == 'DateTimeOrginal':
                 exif_datetime = datetime.strptime(v or "1930:08:25 12:00:00", "%Y:%m:%d %H:%M:%S")
                 cur.execute(
                     "UPDATE photos SET exif_datetime = %s WHERE id = %s", (exif_datetime, id)
