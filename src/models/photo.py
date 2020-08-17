@@ -161,7 +161,7 @@ class Photo():
                     "SELECT photos.owner, photos.id "
                     "FROM photos, albums "
                     "WHERE photos.album = albums.id AND photos.owner = albums.owner and "
-                    "   albums.uuid = %s AND albums.shared=true AND status IN ('P', 'R', 'U') AND flag = 'P' "
+                    "   albums.uuid = %s AND albums.shared=true AND status IN ('P', 'R', 'U') AND flag != 'R' "
                     "ORDER BY exif_datetime ASC",
                     (album_uuid,)
                 )
