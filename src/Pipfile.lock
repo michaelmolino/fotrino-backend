@@ -18,11 +18,11 @@
     "default": {
         "authlib": {
             "hashes": [
-                "sha256:270e778201590af8873cf7d5e8e8ca5b625a16f7afba6a4280b6fb4efdd791bf",
-                "sha256:cc52908e9e996f3de2ac2f61bf1ee6c6f1c5ce8e67c89ff2ca473008fffc92f6"
+                "sha256:078b900fa9fbebf9f8dae1d5dc1ca857b6a742493093ef9b0b36ad926f36e41f",
+                "sha256:21b34625c83ca48150684bbeca8f7c884cd281913c72d146dbf0e9d2fbfdec4e"
             ],
             "index": "pypi",
-            "version": "==0.14.3"
+            "version": "==0.15.2"
         },
         "certifi": {
             "hashes": [
